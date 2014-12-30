@@ -58,5 +58,27 @@ $ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION
 |  Private-artifacts                       |  devops |  54.12.11.11    |  running     |
 ...
 ```
+Create (and destroy) AWS EC2 instances (my random) Cheat Sheet
+------------------------------------------------
 
+This creates an Ubuntu instances (from `ami-9eaa1cf6`) in `t2.micro` hardware with the 30 GB of disk. It passes `user-data` file to clout-init. I returns InstanceId conveniently formatted for bash further process.
 
+```
+$ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -ti safelayer/awscli aws ec2 run-instances \
+--image-id ami-9eaa1cf6 --instance-type t2.micro \
+--block-device-mappings "[{\"DeviceName\": \"/dev/sda1\",\"Ebs\":{\"VolumeSize\":30,\"DeleteOnTermination\":true}}]" \
+--subnet-id subnet-XXXXX \
+--enable-api-termination \
+--user-data user-data-docker \
+--associate-public-ip-address \
+--query 'Instances[].InstanceId' \
+--output text
+```
+
+You can assign the InstanceId to a environment variable and use that variable to destroy the instance:
+
+```
+$ INSTANCE_ID=$(docker ...)
+...
+$ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -ti safelayer/awscli aws ec2 terminate-instance $INSTANCE_ID
+```
