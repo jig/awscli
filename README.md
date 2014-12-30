@@ -4,7 +4,7 @@ Usage
 You can use it passing credentials through ENV variables like this:
 
 ```
-$ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -ti safelayer/awscli ec2 aws describe-instances 
+$ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -ti safelayer/awscli aws ec2 describe-instances 
 ```
 
 Or configuring the container first:
@@ -29,7 +29,7 @@ Browse AWS EC2 images (my) Cheat Sheet
 
 If you use `describe-instances` you usually receive a lot of unneeded info. We usually tag images with a variable named `Group` with the name of the Department that uses the machine. 
 
-To show machine names, groups, IP addresses and running status, use this "simple" JMESpath'd sentence:
+To show machine names, groups, IP addresses and running status, use this "simple" JMESpath'd sentence (scroll to the right to se the JMESpath filter):
 
 ```
 $ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -ti safelayer/awscli aws ec2 describe-instances --query 'Reservations[].Instances[].{group:Tags[?Key==`Group`].Value,name:Tags[?Key==`Name`].Value,ip:PublicIpAddress,status:State.Name} | [].{Name:name[0],group:group[0],ip:ip,status:status}' --output table
@@ -44,7 +44,7 @@ $ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION
 ...
 ```
 
-If you just want to see DevOps team machines, filter it:
+If you just want to see DevOps team machines (tagged `devops`), filter it (scroll to the right to se the JMESpath filter):
 
 ```
 $ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -ti safelayer/awscli aws ec2 describe-instances --query 'Reservations[].Instances[].{group:Tags[?Key==`Group`].Value,name:Tags[?Key==`Name`].Value,ip:PublicIpAddress,status:State.Name} | [?group[0]==`devops`].{Name:name[0],group:group[0],ip:ip,status:status}' --output table
