@@ -8,7 +8,7 @@ $ ./daws ec2 describe-instances
 ...
 ```
 
-Check https://github.com/aws/aws-cli#getting-started for more info about `.aws/config` format.
+Check [aws/aws-cli: Getting Started](https://github.com/aws/aws-cli#getting-started) for more info about `.aws/config` format.
 
 Or you can use the image directly without any script:
 
@@ -32,7 +32,7 @@ Browse AWS EC2 images (my) Cheat Sheet
 
 If you use `describe-instances` you usually receive a lot of unneeded info. We usually tag images with a variable named `Group` with the name of the Department that uses the machine. 
 
-To show machine names, groups, IP addresses and running status, use this "simple" JMESpath'd sentence:
+To show machine names, groups, IP addresses and running status, use this "simple" [JMESpath](http://jmespath.readthedocs.org/en/latest/specification.html)'d sentence:
 
 ```
 $ ./daws ec2 describe-instances --query 'Reservations[].Instances[].{group:Tags[?Key==`Group`].Value,name:Tags[?Key==`Name`].Value,ip:PublicIpAddress,status:State.Name} | [].{Name:name[0],group:group[0],ip:ip,status:status}' --output table
