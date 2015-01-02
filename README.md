@@ -1,7 +1,7 @@
 Usage
 -----
 
-You can use this image with the convenient `daws` script, included here as well. You must have your credentials stored in ~/.aws/config in order to work:
+You can use this image with the convenient `daws` script, included here as well. You must have your credentials stored in `~/.aws/config` in order to work:
 
 ```
 $ ./daws ec2 describe-instances
@@ -13,7 +13,7 @@ Check https://github.com/aws/aws-cli#getting-started for more info about `.aws/c
 Or you can use the image directly without any script:
 
 ```
-$ docker run -ti safelayer/awscli bash
+$ docker run --name myawscli -ti safelayer/awscli bash
 root@7a8b715ffece:/# aws configure
 ...
 ```
