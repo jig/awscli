@@ -1,18 +1,21 @@
 Usage
 -----
 
-You can use it passing credentials through ENV variables like this:
+You can use this image with the convenient `daws` script, included here as well. You must have your credentials stored in ~/.aws/config in order to work:
 
 ```
-$ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -ti safelayer/awscli aws ec2 describe-instances 
+$ ./daws ec2 describe-instances
+...
 ```
 
-Or configuring the container first:
+Check https://github.com/aws/aws-cli#getting-started for more info about `.aws/config` format.
+
+Or you can use the image directly without any script:
 
 ```
-$ docker run --name myawscli -ti safelayer/awscli bash
+$ docker run -ti safelayer/awscli bash
 root@7a8b715ffece:/# aws configure
-AWS Access Key ID [None]: ...
+...
 ```
 
 And then use this personal container (and do not share it!):
@@ -29,10 +32,10 @@ Browse AWS EC2 images (my) Cheat Sheet
 
 If you use `describe-instances` you usually receive a lot of unneeded info. We usually tag images with a variable named `Group` with the name of the Department that uses the machine. 
 
-To show machine names, groups, IP addresses and running status, use this "simple" JMESpath'd sentence (scroll to the right to se the JMESpath filter):
+To show machine names, groups, IP addresses and running status, use this "simple" JMESpath'd sentence:
 
 ```
-$ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -ti safelayer/awscli aws ec2 describe-instances --query 'Reservations[].Instances[].{group:Tags[?Key==`Group`].Value,name:Tags[?Key==`Name`].Value,ip:PublicIpAddress,status:State.Name} | [].{Name:name[0],group:group[0],ip:ip,status:status}' --output table
+$ ./daws ec2 describe-instances --query 'Reservations[].Instances[].{group:Tags[?Key==`Group`].Value,name:Tags[?Key==`Name`].Value,ip:PublicIpAddress,status:State.Name} | [].{Name:name[0],group:group[0],ip:ip,status:status}' --output table
 
 ---------------------------------------------------------------------------------------
 |                                  DescribeInstances                                  |
@@ -44,10 +47,10 @@ $ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION
 ...
 ```
 
-If you just want to see DevOps team machines (tagged `devops`), filter it (scroll to the right to se the JMESpath filter):
+If you just want to see DevOps team machines (tagged `devops`), filter it:
 
 ```
-$ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -ti safelayer/awscli aws ec2 describe-instances --query 'Reservations[].Instances[].{group:Tags[?Key==`Group`].Value,name:Tags[?Key==`Name`].Value,ip:PublicIpAddress,status:State.Name} | [?group[0]==`devops`].{Name:name[0],group:group[0],ip:ip,status:status}' --output table
+$ ./daws ec2 describe-instances --query 'Reservations[].Instances[].{group:Tags[?Key==`Group`].Value,name:Tags[?Key==`Name`].Value,ip:PublicIpAddress,status:State.Name} | [?group[0]==`devops`].{Name:name[0],group:group[0],ip:ip,status:status}' --output table
 
 ---------------------------------------------------------------------------------------
 |                                  DescribeInstances                                  |
@@ -64,7 +67,7 @@ Create (and destroy) AWS EC2 instances (my random) Cheat Sheet
 This creates an Ubuntu instances (from `ami-9eaa1cf6`) in `t2.micro` hardware with the 30 GB of disk. It passes `user-data` file to clout-init. I returns InstanceId conveniently formatted for bash further process.
 
 ```
-$ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -ti safelayer/awscli aws ec2 run-instances \
+$ ./daws ec2 run-instances \
 --image-id ami-9eaa1cf6 --instance-type t2.micro \
 --block-device-mappings "[{\"DeviceName\": \"/dev/sda1\",\"Ebs\":{\"VolumeSize\":30,\"DeleteOnTermination\":true}}]" \
 --subnet-id subnet-XXXXX \
@@ -80,5 +83,10 @@ You can assign the InstanceId to a environment variable and use that variable to
 ```
 $ INSTANCE_ID=$(docker ...)
 ...
-$ docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -ti safelayer/awscli aws ec2 terminate-instance $INSTANCE_ID
+$ ./daws ec2 terminate-instance $INSTANCE_ID
 ```
+
+Notes
+-----
+
+Tested with aws version 1.6.10

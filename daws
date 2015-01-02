@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker run -v $HOME/.aws:/root/.aws safelayer/awscli aws $@
