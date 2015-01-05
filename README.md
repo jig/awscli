@@ -7,9 +7,18 @@ Once installed, try it:
 
 ```
 $ daws --version
+aws-cli/1.6.10 Python/2.7.3 Linux/3.13.0-39-generic
+$ 
 ```
 
 You must have your credentials stored in `~/.aws/config` in order to use it. Check [aws/aws-cli: Getting Started](https://github.com/aws/aws-cli#getting-started) for more info about `.aws/config` format.
+
+All parameters are passed to `aws` `CMD` so you can use `daws` as you would with `aws`:
+
+```
+$ daws ec2 describe-instances
+...
+```
 
 Browse AWS EC2 images (my) Cheat Sheet
 --------------------------------------
