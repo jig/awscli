@@ -1,3 +1,8 @@
 #!/bin/bash
 
-docker run -v $HOME/.aws:/root/.aws safelayer/awscli aws $@
+if [[ -d /tmp/daws ]]
+then
+  docker run -v $HOME/.aws:/root/.aws -v /tmp/daws:/tmp/daws safelayer/awscli $@
+else
+  docker run -v $HOME/.aws:/root/.aws safelayer/awscli $@
+fi
