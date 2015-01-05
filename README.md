@@ -3,6 +3,8 @@ Usage
 
 You can use this image with the convenient `daws` script, included here as well. You must have your credentials stored in `~/.aws/config` in order to work:
 
+Note: you can install daws to `/usr/local/bin` with `$ sudo make install`.
+
 ```
 $ ./daws ec2 describe-instances
 ...
