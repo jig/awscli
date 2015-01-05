@@ -13,12 +13,15 @@ $
 
 You must have your credentials stored in `~/.aws/config` in order to use it. Check [aws/aws-cli: Getting Started](https://github.com/aws/aws-cli#getting-started) for more info about `.aws/config` format.
 
-All parameters are passed to `aws` `CMD` so you can use `daws` as you would with `aws`:
+All parameters are passed to `aws` `ENTRYPOINT` so you can use `daws` as you would with `aws`:
 
 ```
 $ daws ec2 describe-instances
 ...
 ```
+
+Should you pass any file to `aws` you must use local `/tmp/daws`. It is shared if it exists.
+
 
 Browse AWS EC2 images (my) Cheat Sheet
 --------------------------------------
