@@ -12,4 +12,6 @@ RUN ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
 
 ENV LANG C.UTF-8
 
-CMD ["/usr/local/bin/aws", "help"]
+ENTRYPOINT ["/usr/local/bin/aws"]
+
+CMD ["help"]
