@@ -1,33 +1,15 @@
 Usage
 -----
 
-You can use this image with the convenient `daws` script, included here as well. You must have your credentials stored in `~/.aws/config` in order to work:
+You can use this image with the convenient `daws` script included here as well. First you can install daws to `/usr/local/bin` with `$ sudo make install` (you can leave in your home directory if do not have `sudo` rights).
 
-Note: you can install daws to `/usr/local/bin` with `$ sudo make install`.
-
-```
-$ ./daws ec2 describe-instances
-...
-```
-
-Check [aws/aws-cli: Getting Started](https://github.com/aws/aws-cli#getting-started) for more info about `.aws/config` format.
-
-Or you can use the image directly without any script:
+Once installed, try it:
 
 ```
-$ docker run --name myawscli -ti safelayer/awscli bash
-root@7a8b715ffece:/# aws configure
-...
+$ daws --version
 ```
 
-And then use this personal container (and do not share it!):
-
-```
-$ docker start myawscli
-$ docker attach myawscli
-root@7a8b715ffece:/# aws ec2 describe-instances
-...
-```
+You must have your credentials stored in `~/.aws/config` in order to use it. Check [aws/aws-cli: Getting Started](https://github.com/aws/aws-cli#getting-started) for more info about `.aws/config` format.
 
 Browse AWS EC2 images (my) Cheat Sheet
 --------------------------------------
@@ -37,7 +19,7 @@ If you use `describe-instances` you usually receive a lot of unneeded info. We u
 To show machine names, groups, IP addresses and running status, use this "simple" [JMESpath](http://jmespath.readthedocs.org/en/latest/specification.html)'d sentence:
 
 ```
-$ ./daws ec2 describe-instances --query 'Reservations[].Instances[].{group:Tags[?Key==`Group`].Value,name:Tags[?Key==`Name`].Value,ip:PublicIpAddress,status:State.Name} | [].{Name:name[0],group:group[0],ip:ip,status:status}' --output table
+$ daws ec2 describe-instances --query 'Reservations[].Instances[].{group:Tags[?Key==`Group`].Value,name:Tags[?Key==`Name`].Value,ip:PublicIpAddress,status:State.Name} | [].{Name:name[0],group:group[0],ip:ip,status:status}' --output table
 
 ---------------------------------------------------------------------------------------
 |                                  DescribeInstances                                  |
@@ -52,7 +34,7 @@ $ ./daws ec2 describe-instances --query 'Reservations[].Instances[].{group:Tags[
 If you just want to see DevOps team machines (tagged `devops`), filter it:
 
 ```
-$ ./daws ec2 describe-instances --query 'Reservations[].Instances[].{group:Tags[?Key==`Group`].Value,name:Tags[?Key==`Name`].Value,ip:PublicIpAddress,status:State.Name} | [?group[0]==`devops`].{Name:name[0],group:group[0],ip:ip,status:status}' --output table
+$ daws ec2 describe-instances --query 'Reservations[].Instances[].{group:Tags[?Key==`Group`].Value,name:Tags[?Key==`Name`].Value,ip:PublicIpAddress,status:State.Name} | [?group[0]==`devops`].{Name:name[0],group:group[0],ip:ip,status:status}' --output table
 
 ---------------------------------------------------------------------------------------
 |                                  DescribeInstances                                  |
@@ -69,7 +51,7 @@ Create (and destroy) AWS EC2 instances (my random) Cheat Sheet
 This creates an Ubuntu instances (from `ami-9eaa1cf6`) in `t2.micro` hardware with the 30 GB of disk. It passes `user-data` file to clout-init. I returns InstanceId conveniently formatted for bash further process.
 
 ```
-$ ./daws ec2 run-instances \
+$ daws ec2 run-instances \
 --image-id ami-9eaa1cf6 --instance-type t2.micro \
 --block-device-mappings "[{\"DeviceName\": \"/dev/sda1\",\"Ebs\":{\"VolumeSize\":30,\"DeleteOnTermination\":true}}]" \
 --subnet-id subnet-XXXXX \
@@ -85,7 +67,7 @@ You can assign the InstanceId to a environment variable and use that variable to
 ```
 $ INSTANCE_ID=$(docker ...)
 ...
-$ ./daws ec2 terminate-instance $INSTANCE_ID
+$ daws ec2 terminate-instance $INSTANCE_ID
 ```
 
 Notes
